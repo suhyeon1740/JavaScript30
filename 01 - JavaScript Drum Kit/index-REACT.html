@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Document</title>
+        <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+        <script
+            src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+            crossorigin
+        ></script>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="text/babel">
+            function App() {
+                const { useState } = React
+                const [keys] = useState([
+                    { code: 65, name: "A", sound: "clap" },
+                    { code: 83, name: "S", sound: "hihat" },
+                    { code: 68, name: "D", sound: "kick" },
+                    { code: 70, name: "F", sound: "openhat" },
+                    { code: 71, name: "G", sound: "boom" },
+                    { code: 72, name: "H", sound: "ride" },
+                    { code: 74, name: "J", sound: "snare" },
+                    { code: 75, name: "K", sound: "tom" },
+                    { code: 76, name: "L", sound: "tink" },
+                ])
+                const playSound = ({ keyCode }) => {
+                    const $audio = document.querySelector(`audio[data-key="${keyCode}"]`)
+                    const $key = document.querySelector(`div[data-key="${keyCode}"]`)
+                    if (!$key) return
+                    $key.classList.add("playing")
+                    $audio.currentTime = 0
+                    $audio.play()
+                }
+                const removePlaying = (e) => {
+                    e.target.classList.remove("playing")
+                }
+                window.addEventListener("keydown", playSound)
+                return (
+                    <div>
+                        <div className="keys">
+                            {keys.map((key, i) => (
+                                <div
+                                    data-key={key.code}
+                                    className="key"
+                                    key={i}
+                                    onTransitionEnd={removePlaying}
+                                >
+                                    <kbd>{key.name}</kbd>
+                                    <span className="sound">{key.sound}</span>
+                                    <audio
+                                        data-key={key.code}
+                                        src={`sounds/${key.sound}.wav`}
+                                    ></audio>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )
+            }
+            ReactDOM.render(<App />, document.getElementById("root"))
+        </script>
+    </body>
+</html>
