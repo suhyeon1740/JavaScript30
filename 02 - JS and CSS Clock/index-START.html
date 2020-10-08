@@ -93,7 +93,7 @@
                 min.style.transform = `rotate(${date.getMinutes() * 6}deg)`
                 seconds.style.transform = `rotate(${secondDeg}deg)`
                 if (secondDeg === 354 || secondDeg === 0) {
-                    seconds.style.transition = "all 0s ease 0s"
+                    seconds.style.transition = "all 0s"
                 } else {
                     seconds.style.transition = "transform 0.2s cubic-bezier(0.4, 2.08, 0.55, 0.44)"
                 }

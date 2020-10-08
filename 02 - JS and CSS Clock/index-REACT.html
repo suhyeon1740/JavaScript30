@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>JS + CSS Clock</title>
+        <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+        <script
+            src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+            crossorigin
+        ></script>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    </head>
+    <body>
+        <div class="clock" id="root"></div>
+
+        <style>
+            html {
+                background: #018ded url(https://unsplash.it/1500/1000?image=881&blur=5);
+                background-size: cover;
+                font-family: "helvetica neue";
+                text-align: center;
+                font-size: 10px;
+            }
+
+            body {
+                margin: 0;
+                font-size: 2rem;
+                display: flex;
+                flex: 1;
+                min-height: 100vh;
+                align-items: center;
+            }
+
+            .clock {
+                width: 30rem;
+                height: 30rem;
+                border: 20px solid white;
+                border-radius: 50%;
+                margin: 50px auto;
+                position: relative;
+                padding: 2rem;
+                box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1), inset 0 0 0 3px #efefef,
+                    inset 0 0 10px black, 0 0 10px rgba(0, 0, 0, 0.2);
+            }
+
+            .clock-face {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                transform: translateY(-3px); /* account for the height of the clock hands */
+            }
+            .clock-face::after {
+                position: absolute;
+                content: "";
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                background-color: black;
+                width: 5%;
+                height: 5%;
+                border-radius: 50%;
+            }
+            .hand {
+                height: 50%;
+                width: 2%;
+                background: black;
+                position: absolute;
+                left: 49%;
+                transform-origin: 50% 100%;
+                transition: transform 0.3s cubic-bezier(0.4, 2.08, 0.55, 0.44);
+            }
+            .second-hand {
+                background-color: red;
+                width: 1%;
+                top: 5%;
+                transform-origin: 50% 90%;
+                left: 49.5%;
+            }
+            .hour-hand {
+                height: 30%;
+                top: 20%;
+            }
+        </style>
+
+        <script type="text/babel">
+            function Clock() {
+                const { useState, useEffect } = React
+                const [date, setState] = useState(new Date())
+                const [test] = useState("a")
+                const getHands = () => {
+                    const secondDeg = date.getSeconds() * 6
+                    const style = { transform: `rotate(${date.getHours() * 30}deg)` }
+                    let secondsStyle = {
+                        transform: `rotate(${secondDeg}deg)`,
+                        transition: "transform 0.2s cubic-bezier(0.4, 2.08, 0.55, 0.44)",
+                    }
+                    // 초침이 55초 ~ 0초 사이가 되면 거꾸로 돌아가는 현상 방지
+                    if (secondDeg === 354 || secondDeg === 0) {
+                        secondsStyle.transition = "all 0s"
+                    }
+                    return [
+                        {
+                            className: "hour-hand",
+                            style: { transform: `rotate(${date.getHours() * 30}deg)` },
+                        },
+                        {
+                            className: "min-hand",
+                            style: { transform: `rotate(${date.getMinutes() * 6}deg)` },
+                        },
+                        { className: "second-hand", style: secondsStyle },
+                    ]
+                }
+                useEffect(() => {
+                    setInterval(() => {
+                        setState(new Date())
+                    }, 1000)
+                }, [])                
+                return (
+                    <div className="clock-face">
+                        {getHands().map((hand, i) => (
+                            <div
+                                key={i}
+                                className={`hand ${hand.className}`}
+                                style={hand.style}
+                            ></div>
+                        ))}
+                    </div>
+                )
+            }
+            ReactDOM.render(<Clock />, document.querySelector("#root"))
+        </script>
+    </body>
+</html>
