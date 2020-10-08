@@ -85,8 +85,7 @@
         <script type="text/babel">
             function Clock() {
                 const { useState, useEffect } = React
-                const [date, setState] = useState(new Date())
-                const [test] = useState("a")
+                const [date, setState] = useState(new Date())                
                 const getHands = () => {
                     const secondDeg = date.getSeconds() * 6
                     const style = { transform: `rotate(${date.getHours() * 30}deg)` }
