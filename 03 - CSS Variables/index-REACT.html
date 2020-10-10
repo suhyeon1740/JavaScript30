@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Scoped CSS Variables and JS</title>
+        <script src="https://unpkg.com/@babel/standalone/babel.js"></script>
+        <script src="https://unpkg.com/react/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom/umd/react-dom.development.js"></script>
+    </head>
+    <body>
+        <div id="root"></div>
+
+        <style>        
+            body {
+                text-align: center;
+                background: #193549;
+                color: white;
+                font-family: "helvetica neue", sans-serif;
+                font-weight: 100;
+                font-size: 50px;
+            }
+
+            .controls {
+                margin-bottom: 50px;
+            }
+
+            input {
+                width: 100px;
+            }
+        </style>
+
+        <script type="text/babel">
+            function App() {
+                const [state, setState] = React.useState({
+                    base: '#ffc600',
+                    blur: '10px',
+                    spacing: '10px'
+                })
+                const updateValue = (e) => {
+                    const sizing = e.target.dataset.sizing || ""
+                    setState({
+                        ...state,
+                        [e.target.name] :  e.target.value + sizing
+                    })                    
+                }
+                return (
+                    <>
+                        <h2>
+                            Update CSS Variables with <span className="hl" style={{ color: state.base }}>JS</span>
+                        </h2>
+
+                        <div className="controls">
+                            <label htmlFor="spacing">Spacing:</label>
+                            <input
+                                id="spacing"
+                                type="range"
+                                name="spacing"
+                                min="10"
+                                max="200"
+                                defaultValue="10"
+                                data-sizing="px"
+                                onInput={updateValue}
+                            />
+
+                            <label htmlFor="blur">Blur:</label>
+                            <input
+                                id="blur"
+                                type="range"
+                                name="blur"
+                                min="0"
+                                max="25"
+                                defaultValue="10"
+                                data-sizing="px"
+                                onInput={updateValue}
+                            />
+
+                            <label htmlFor="base">Base Color</label>
+                            <input
+                                id="base"
+                                type="color"
+                                name="base"
+                                defaultValue="#ffc600"
+                                onInput={updateValue}
+                            />
+                        </div>
+
+                        <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500" style={{
+                            background: state.base,
+                            filter: `blur(${state.blur})`,
+                            padding: state.spacing,
+                        }} />
+                    </>
+                )
+            }
+            ReactDOM.render(<App />, document.querySelector("#root"))           
+        </script>
+    </body>
+</html>
