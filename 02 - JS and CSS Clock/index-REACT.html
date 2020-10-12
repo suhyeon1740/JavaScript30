@@ -85,42 +85,31 @@
         <script type="text/babel">
             function Clock() {
                 const { useState, useEffect } = React
-                const [date, setState] = useState(new Date())                
-                const getHands = () => {
-                    const secondDeg = date.getSeconds() * 6
-                    const style = { transform: `rotate(${date.getHours() * 30}deg)` }
-                    let secondsStyle = {
-                        transform: `rotate(${secondDeg}deg)`,
-                        transition: "transform 0.2s cubic-bezier(0.4, 2.08, 0.55, 0.44)",
-                    }
-                    // 초침이 55초 ~ 0초 사이가 되면 거꾸로 돌아가는 현상 방지
-                    if (secondDeg === 354 || secondDeg === 0) {
-                        secondsStyle.transition = "all 0s"
-                    }
-                    return [
-                        {
-                            className: "hour-hand",
-                            style: { transform: `rotate(${date.getHours() * 30}deg)` },
-                        },
-                        {
-                            className: "min-hand",
-                            style: { transform: `rotate(${date.getMinutes() * 6}deg)` },
-                        },
-                        { className: "second-hand", style: secondsStyle },
-                    ]
-                }
+                const [date, setState] = useState(new Date())
+                const hands = [
+                    { className: "hour-hand", deg: date.getHours() * 30 },
+                    { className: "min-hand", deg: date.getMinutes() * 6 },
+                    { className: "second-hand", deg: date.getSeconds() * 6 },
+                ]
                 useEffect(() => {
                     setInterval(() => {
                         setState(new Date())
                     }, 1000)
-                }, [])                
+                }, [])
                 return (
                     <div className="clock-face">
-                        {getHands().map((hand, i) => (
+                        {hands.map((hand, i) => (
                             <div
                                 key={i}
                                 className={`hand ${hand.className}`}
-                                style={hand.style}
+                                style={{
+                                    transform: `rotate(${hand.deg}deg)`,
+                                    transition: `${
+                                        hand.deg === 354 || hand.deg === 0
+                                            ? "all 0s"
+                                            : "transform 0.2s cubic- bezier(0.4, 2.08, 0.55, 0.44)"
+                                    }`,
+                                }}
                             ></div>
                         ))}
                     </div>
