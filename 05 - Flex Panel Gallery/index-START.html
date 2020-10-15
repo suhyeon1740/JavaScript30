@@ -26,6 +26,7 @@
     .panels {
       min-height: 100vh;
       overflow: hidden;
+      display: flex;
     }
 
     .panel {
@@ -43,6 +44,10 @@
       font-size: 20px;
       background-size: cover;
       background-position: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex: 1;
     }
 
     .panel1 { background-image:url(https://source.unsplash.com/gYl-UtwNg_I/1500x1500); }
@@ -56,13 +61,29 @@
       margin: 0;
       width: 100%;
       transition: transform 0.5s;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .panel p {
       text-transform: uppercase;
       font-family: 'Amatic SC', cursive;
       text-shadow: 0 0 4px rgba(0, 0, 0, 0.72), 0 0 14px rgba(0, 0, 0, 0.45);
-      font-size: 2em;
+      font-size: 2em;      
+    }
+
+    .panel p:first-child {
+      transform: translateY(-100%);
+    }
+
+    .panel p:last-child {
+      transform: translateY(100%);
+    }
+
+    .open-active p {
+      transform: translateY(0) !important;
     }
     
     .panel p:nth-child(2) {
@@ -70,6 +91,7 @@
     }
 
     .panel.open {
+      flex: 5;
       font-size: 40px;
     }
 
@@ -104,8 +126,20 @@
     </div>
   </div>
 
-  <script>
-
+  <script>    
+    function toggleOpen() {
+      this.classList.toggle('open')
+    }
+    function toggleActive(e) {
+      //transition되는 속성이 2개이기 때문에 grow속성에만 toggle 적용
+      if(e.propertyName.includes('flex-grow')) { 
+        this.classList.toggle('open-active')
+      }
+    }
+    document.querySelectorAll('.panel').forEach(panel => {
+      panel.addEventListener('click', toggleOpen)
+      panel.addEventListener('transitionend', toggleActive)
+    })  
   </script>
 
 
