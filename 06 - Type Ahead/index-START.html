@@ -1,22 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Type Ahead 👀</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Type Ahead 👀</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <form class="search-form">
+            <input type="text" class="search" placeholder="City or State" />
+            <ul class="suggestions">
+                <li>Filter for a city</li>
+                <li>or a state</li>
+            </ul>
+        </form>
+        <script>
+            function highlight(text) {
+                if (!input.value) return text
+                const index = text.toLowerCase().indexOf(input.value)
+                if (index < 0) return text
+                return `${text.slice(0, index)} <span class="hl">${input.value}</span>${text.slice(
+                    index + input.value.length
+                )}`
+            }
+            function numberFormat(inputNumber) {
+                return inputNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            }
+            let allData = null
+            function makeList(data) {
+                const ul = document.querySelector(".suggestions")
+                ul.innerHTML = data
+                    .map(
+                        ({ city, state, population }) =>
+                            `<li><span class="name">${highlight(city)}, ${highlight(
+                                state
+                            )}</span><span class="population">${numberFormat(population)}</span></li>`
+                    )
+                    .join("")
+            }
+            const endpoint =
+                "https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json"
+            fetch(endpoint)
+                .then((json) => json.json())
+                .then((data) => {
+                    allData = data
+                    return data
+                })
+                .then(makeList)
 
-  <form class="search-form">
-    <input type="text" class="search" placeholder="City or State">
-    <ul class="suggestions">
-      <li>Filter for a city</li>
-      <li>or a state</li>
-    </ul>
-  </form>
-<script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
-
-</script>
-</body>
+            const input = document.querySelector(".search")
+            input.addEventListener("keyup", () => {
+                const data = allData.filter(
+                    (item) =>
+                        item.city.toLowerCase().indexOf(input.value.toLowerCase()) > -1 ||
+                        item.state.toLowerCase().indexOf(input.value.toLowerCase()) > -1
+                )
+                makeList(data)
+            })
+        </script>
+    </body>
 </html>
