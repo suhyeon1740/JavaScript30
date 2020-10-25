@@ -15,12 +15,8 @@
         </form>
         <script>
             function highlight(text) {
-                if (!input.value) return text
-                const index = text.toLowerCase().indexOf(input.value)
-                if (index < 0) return text
-                return `${text.slice(0, index)} <span class="hl">${input.value}</span>${text.slice(
-                    index + input.value.length
-                )}`
+                if (!input.value) return text            
+                return text.toLowerCase().replace(input.value.toLowerCase(), `<span class="hl">${input.value}</span>`)
             }
             function numberFormat(inputNumber) {
                 return inputNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
