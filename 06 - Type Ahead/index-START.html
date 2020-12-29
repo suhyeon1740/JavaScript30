@@ -14,44 +14,47 @@
             </ul>
         </form>
         <script>
+            const endpoint =
+                "https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json"
+            const cities = []
+            fetch(endpoint)
+                .then((json) => json.json())
+                .then((data) => cities.push(...data))
+
             function highlight(text) {
-                if (!input.value) return text            
-                return text.toLowerCase().replace(input.value.toLowerCase(), `<span class="hl">${input.value}</span>`)
+                if (!input.value) return text
+                return text
+                    .toLowerCase()
+                    .replace(input.value.toLowerCase(), `<span class="hl">${input.value}</span>`)
             }
             function numberFormat(inputNumber) {
                 return inputNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             }
-            let allData = null
-            function makeList(data) {
+
+            function displayMatches() {
+                const matchArray = findMatches(this.value)
                 const ul = document.querySelector(".suggestions")
-                ul.innerHTML = data
+                ul.innerHTML = matchArray
                     .map(
                         ({ city, state, population }) =>
                             `<li><span class="name">${highlight(city)}, ${highlight(
                                 state
-                            )}</span><span class="population">${numberFormat(population)}</span></li>`
+                            )}</span><span class="population">${numberFormat(
+                                population
+                            )}</span></li>`
                     )
                     .join("")
             }
-            const endpoint =
-                "https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json"
-            fetch(endpoint)
-                .then((json) => json.json())
-                .then((data) => {
-                    allData = data
-                    return data
+
+            function findMatches(wordToMatch) {
+                return cities.filter((place) => {
+                    const regex = new RegExp(wordToMatch, "gi") // g: 전역검색, i: 대소문자 구분 없이
+                    return place.city.match(regex) || place.state.match(regex)
                 })
-                .then(makeList)
+            }
 
             const input = document.querySelector(".search")
-            input.addEventListener("keyup", () => {
-                const data = allData.filter(
-                    (item) =>
-                        item.city.toLowerCase().indexOf(input.value.toLowerCase()) > -1 ||
-                        item.state.toLowerCase().indexOf(input.value.toLowerCase()) > -1
-                )
-                makeList(data)
-            })
+            input.addEventListener("keyup", displayMatches)
         </script>
     </body>
 </html>
